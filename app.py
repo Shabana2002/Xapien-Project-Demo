@@ -71,7 +71,8 @@ if st.button("Find Fit"):
         {"id": 3, "Chest": 88, "Waist": 78, "Hip": 94},   # very close
     ] + [{"id": i, "Chest": 100+i%5, "Waist": 80+i%3, "Hip": 90+i%4} for i in range(4, 100)]
 
-    user = data.copy()
+    ds = DataSanitizer(data.copy())
+    user = ds.normalize()
     result = find_best(user, db)
 
     st.markdown("---")
