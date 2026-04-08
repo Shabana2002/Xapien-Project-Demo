@@ -1,137 +1,95 @@
 XIPL Assignment Demo – 3D Body Measurement & Garment Recommendation System
+
 Project Overview
 
-This project implements an end-to-end system for:
-
+This project implements an end-to-end system for three main tasks:
 Q1: Extracting body measurements from a 3D mesh
 Q2: Cleaning, normalizing, and validating user-provided measurements
 Q3: Recommending the top 3 best-fitting garments using a multi-constraint scoring algorithm
 
-It combines 3D geometry, data validation, and recommendation systems into an interactive Streamlit application.
+The system combines 3D geometry, data validation, and recommendation algorithms into an interactive Streamlit application.
 
 Key Highlights
-Robust mesh slicing algorithm to compute circumference at any height
-Intelligent unit normalization & outlier detection
-Real-world inspired asymmetric fit scoring
-Scalable design with future-ready optimization strategies
+	•	Robust mesh slicing algorithm to compute circumference at any height
+	•	Intelligent unit normalization and outlier detection
+	•	Real-world inspired asymmetric fit scoring
+	•	Scalable design with future optimization strategies
+
 Project Structure
-1. q1_mesh.py
-Computes circumference at a given height (height_z)
-Detects triangle-plane intersections
-Interpolates intersection points
-Sorts points into a closed loop (polyline)
-Calculates total perimeter
-2. q1_visualize.py
-Visualizes the 3D mesh using Matplotlib
-Highlights the computed cross-section in red
-Uses a cylindrical mesh to simulate a human torso for clear loop formation
 
-![output.png](output.png)
+q1_mesh.py
+This file computes circumference at a given height (height_z). It detects triangle-plane intersections, interpolates intersection points, sorts them into a closed loop (polyline), and calculates the total perimeter.
 
-3. q2_sanitize.py
+q1_visualize.py
+This file visualizes the 3D mesh using Matplotlib. It highlights the computed cross-section in red and uses a cylindrical mesh to simulate a human torso for demonstration.
 
-Implements the DataSanitizer class.
+q2_sanitize.py
+This file implements the DataSanitizer class. It automatically detects units and converts inches to centimeters. It validates data using proportional rules such as waist should not exceed height and chest should be at least 30% of height. It also estimates missing values, for example arm length is calculated as 0.45 times height.
 
-Features:
+q3_search.py
+This file implements the Best-Fit Multi-Constraint Algorithm. It uses asymmetric penalty logic where garments that are too small get a high penalty and garments that are too large get a low penalty. Chest measurement is given higher importance with double weight. The output returns the top 3 garments along with a fit confidence score between 0 and 100.
 
-Automatic unit detection & conversion (inches → cm)
-Proportional validation
-Waist ≤ Height
-Chest ≥ 30% of Height
-Missing value estimation
-Example: Arm length ≈ 0.45 × Height
-4. q3_search.py
+app.py
+This is the Streamlit-based user interface. It allows users to input their measurements, view normalized and validated data, detect issues instantly, and get the top 3 garment recommendations along with fit quality.
 
-Implements the Best-Fit Multi-Constraint Algorithm
+How to Run
 
-Scoring Logic:
-
-Asymmetric penalty
-Too small → high penalty (unwearable)
-Too large → low penalty (relaxed fit)
-Weighted importance
-Chest is given higher importance (2× weight)
-
-Output:
-
-Top 3 garments
-Fit confidence score (0–100)
-5. app.py
-
-Streamlit-based UI:
-
-Input user measurements
-View normalized and validated data
-Detect issues instantly
-Get top 3 garment recommendations with fit quality
-⚙How to Run
-
-Install dependencies:
-
+First install dependencies using:
 pip install -r requirements.txt
 
-Run the Streamlit app:
-
+Then run the application using:
 streamlit run app.py
 
-Optional – Visualize mesh slices (Q1):
-
+Optional step for Q1 visualization:
 python q1_visualize.py
+
 Assumptions
-Mesh is manifold and reasonably smooth
-Human body approximates a continuous surface
-Measurement inputs fall within human physiological ranges
-Garment database is structured and normalized
+	•	The mesh is continuous and smooth
+	•	Human body is approximated as a continuous surface
+	•	Measurement inputs fall within realistic human ranges
+	•	Garment database is structured and clean
+
 Limitations
-Q1: Assumes a single continuous loop (may not handle multiple disconnected slices)
-Q2: Unit detection is heuristic-based
-Q3: Uses linear scan (not optimized for very large datasets)
+	•	Q1 assumes a single continuous loop and may not work for complex meshes
+	•	Q2 unit detection is heuristic-based
+	•	Q3 uses linear search which is not optimal for very large datasets
+
 Complexity Analysis
-Q1: O(F), where F = number of mesh faces
-Q2: O(n), where n = number of measurements
-Q3: O(N log N) due to sorting
+	•	Q1 runs in O(F) where F is the number of mesh faces
+	•	Q2 runs in O(n) where n is the number of measurements
+	•	Q3 runs in O(N log N) due to sorting
+
 Example Output
 
 Normalized Data:
-
 Height: 170 cm
 Chest: 90 cm
 Waist: 80 cm
 Hip: 95 cm
-Arm: 76.5 cm
-
-Issues Found:
-
-No issues detected
-
-Estimated Values:
-
 Arm: 76.5 cm (estimated)
 
-Top 3 Garments:
+Issues Found:
+No issues detected
 
+Top 3 Garments:
 Rank 1 → Garment ID: 1, Score: 100, Excellent Fit
 Rank 2 → Garment ID: 2, Score: 93, Excellent Fit
 Rank 3 → Garment ID: 15, Score: 60, Average Fit
+
 Scalability Strategy
 
-For large datasets (~1M+ garments):
+For large datasets around 1 million garments:
+	•	Use KD-Tree or BallTree for faster nearest neighbor search
+	•	Use vector databases such as Milvus or Pinecone
+	•	Precompute embeddings for faster similarity matching
 
-Use KD-Tree or BallTree for nearest neighbor search
-Use Vector Databases (Milvus, Pinecone)
-Precompute embeddings for faster similarity matching
 Future Improvements
-Use Trimesh for more accurate mesh processing
-Add interactive 3D visualization (Three.js / WebGL)
-Extend measurements (inseam, shoulder width, etc.)
-Learn scoring weights from user feedback or return data
-Introduce machine learning-based fit prediction
+	•	Use advanced libraries like Trimesh for better mesh processing
+	•	Add interactive 3D visualization using Three.js or WebGL
+	•	Extend measurements such as inseam and shoulder width
+	•	Learn scoring weights from user feedback
+	•	Introduce machine learning-based fit prediction
+
 Conclusion
 
-This project demonstrates a practical approach to solving a real-world apparel fitting problem by combining:
-
-3D geometric computation
-Data validation pipelines
-Intelligent recommendation algorithms
-
-The system is modular, extensible, and scalable, making it suitable for production-level applications.
+This project demonstrates a practical solution for apparel fitting by combining 3D geometric computation, data validation, and intelligent recommendation algorithms. The system is modular, scalable, and suitable for real-world applications.
