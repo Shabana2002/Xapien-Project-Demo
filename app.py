@@ -9,7 +9,6 @@ st.title("XIPL Assignment Demo")
 # ---------------- Q2 ----------------
 st.header("Q2: Data Sanitizer")
 
-# User Inputs
 data = {
     "Height": st.number_input("Height (cm)", value=170),
     "Chest": st.number_input("Chest (cm)", value=90),
@@ -26,12 +25,10 @@ if st.button("Process"):
 
     st.markdown("---")
 
-    # ✅ Normalized Data
     st.subheader("Normalized Data")
     for key, value in norm.items():
         st.write(f"**{key}:** {round(value, 2)} cm")
 
-    # ✅ Issues Found
     st.subheader("Issues Found")
     if issues:
         for issue in issues:
@@ -39,7 +36,6 @@ if st.button("Process"):
     else:
         st.success("No issues detected ✅")
 
-    # ✅ Estimated Values
     st.subheader("Estimated Values")
     estimated_found = False
     for key, value in est.items():
@@ -54,25 +50,33 @@ if st.button("Process"):
 st.header("Q3: Best Fit Search")
 
 def confidence_label(score):
-    if score > 80:
+    if score > 85:
         return "Excellent Fit"
-    elif score > 60:
+    elif score > 70:
         return "Good Fit"
-    elif score > 40:
+    elif score > 50:
         return "Average Fit"
     else:
         return "Poor Fit"
 
 if st.button("Find Fit"):
-    # Demo DB with realistic near-perfect matches
+
+    # Demo database
     db = [
-        {"id": 1, "Chest": 90, "Waist": 80, "Hip": 95},   # perfect match
-        {"id": 2, "Chest": 92, "Waist": 82, "Hip": 96},   # very close
-        {"id": 3, "Chest": 88, "Waist": 78, "Hip": 94},   # very close
+        {"id": 1, "Chest": 90, "Waist": 80, "Hip": 95},
+        {"id": 2, "Chest": 92, "Waist": 82, "Hip": 96},
+        {"id": 3, "Chest": 88, "Waist": 78, "Hip": 94},
     ] + [{"id": i, "Chest": 100+i%5, "Waist": 80+i%3, "Hip": 90+i%4} for i in range(4, 100)]
 
     ds = DataSanitizer(data.copy())
     user = ds.normalize()
+
+    st.markdown("---")
+    st.subheader("User Body Measurements (Normalized)")
+
+    for k, v in user.items():
+        st.write(f"**{k}:** {round(v, 2)} cm")
+
     result = find_best(user, db)
 
     st.markdown("---")
@@ -83,9 +87,10 @@ if st.button("Find Fit"):
         st.write(f"**Garment ID:** {item['id']}")
         st.write(f"**Fit Score:** {item['score']} / 100")
         st.write(f"**Fit Quality:** {confidence_label(item['score'])}")
+        st.write(f"Chest: {item['Chest']} cm | Waist: {item['Waist']} cm | Hip: {item['Hip']} cm")
         st.markdown("---")
 
     st.info(
-        "💡 Note: For very large databases (~1M garments), linear scan is slow. "
-        "Use KD-Tree, BallTree, or a Vector Database (Milvus / Pinecone) for fast nearest-neighbor search."
+        "💡 For large-scale systems (1M+ garments), replace linear search with KD-Tree, BallTree, "
+        "or vector databases like Milvus or Pinecone for fast nearest-neighbor retrieval."
     )
