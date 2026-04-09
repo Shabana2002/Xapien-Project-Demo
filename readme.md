@@ -23,6 +23,8 @@ This file computes circumference at a given height (height_z). It detects triang
 q1_visualize.py
 This file visualizes the 3D mesh using Matplotlib. It highlights the computed cross-section in red and uses a cylindrical mesh to simulate a human torso for demonstration.
 
+![output.png](output.png)
+
 q2_sanitize.py
 This file implements the DataSanitizer class. It automatically detects units and converts inches to centimeters. It validates data using proportional rules such as waist should not exceed height and chest should be at least 30% of height. It also estimates missing values, for example arm length is calculated as 0.45 times height.
 
